@@ -4,10 +4,14 @@ on:
   # Trigger the workflow on push or pull request,
   # but only for the main branch
   workflow_call:
-   inputs:
-     node_version:
-       required: true
-       type: string
+    inputs:
+      node_version:
+        required: true
+        type: string
+    secrets:
+      GITHUB_TOKEN:
+        description: 'The GITHUB_TOKEN to authenticate on behalf of GitHub Actions.'
+        required: true
 
 # Down scope as necessary via https://docs.github.com/en/actions/security-guides/automatic-token-authentication#modifying-the-permissions-for-the-github_token
 permissions:
@@ -37,3 +41,4 @@ jobs:
           eslint_extensions: "ts"
           eslint_auto_fix: true
           commit_message: 'fix: fix code style issues with ${linter}'
+          github_token: ${{secrets.GITHUB_TOKEN}}
