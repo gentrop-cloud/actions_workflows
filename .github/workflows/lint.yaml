@@ -8,10 +8,7 @@ on:
       node_version:
         required: true
         type: string
-    secrets:
-      GITHUB_TOKEN:
-        description: 'The GITHUB_TOKEN to authenticate on behalf of GitHub Actions.'
-        required: true
+
 
 # Down scope as necessary via https://docs.github.com/en/actions/security-guides/automatic-token-authentication#modifying-the-permissions-for-the-github_token
 permissions:
