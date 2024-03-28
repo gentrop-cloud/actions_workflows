@@ -42,7 +42,7 @@ jobs:
         uses: google-github-actions/setup-gcloud@v2
 
       - name: 'Use gcloud CLI'
-        run: 'gcloud info'
+        run: gcloud auth list
 
       # Build and push image to Google Container Registry
       - name: Build
