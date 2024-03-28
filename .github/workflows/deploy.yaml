@@ -33,13 +33,16 @@ jobs:
         name: 'Authenticate to Google Cloud'
         uses: 'google-github-actions/auth@v0.4.0'
         with:
-          #create_credentials_file: 'true'
+          create_credentials_file: 'true'
           workload_identity_provider: ${{inputs.identity_pool}}
           service_account: ${{inputs.identity_sa}}
 
       # Setup gcloud CLI
       - name: Set up Cloud SDK
         uses: google-github-actions/setup-gcloud@v2
+
+      - name: 'Use gcloud CLI'
+        run: gcloud auth login --brief --cred-file="${{ steps.auth.outputs.credentials_file_path }}"
 
       - name: 'Use gcloud CLI'
         run: gcloud auth list
@@ -49,7 +52,7 @@ jobs:
         run: gcloud builds submit --tag ${{inputs.image}}
 
 # deploy app to Cloud Run
-      - name: Build
+      - name: Deploy
         run: |-
          gcloud run deploy $SERVICE_NAME \
          --platform managed \
