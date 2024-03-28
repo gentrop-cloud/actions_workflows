@@ -12,3 +12,8 @@ To help to run our suit tests, and writing the workflow only once, we could use 
 It should be extensible, accepting parameters like `use_emulators` and specify which script should be run. 
 
 If the test scenario is too different, we can always create a new one from the present configuration and specify it on our project.
+
+
+### Deploy
+
+Ref: https://cloud.google.com/blog/products/identity-security/enabling-keyless-authentication-from-github-actions

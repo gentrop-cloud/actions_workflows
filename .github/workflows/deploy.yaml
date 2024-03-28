@@ -1,0 +1,56 @@
+name: Deploy
+
+on:
+  # Trigger the workflow on push or pull request,
+  # but only for the main branch
+  workflow_call:
+    inputs:
+      identity_pool:
+        required: true	
+        type: string
+      identity_sa:
+        required: true
+        type: string
+      image:
+        required: true
+        type: string
+
+
+# Down scope as necessary via https://docs.github.com/en/actions/security-guides/automatic-token-authentication#modifying-the-permissions-for-the-github_token
+
+jobs:
+  run-deploy:
+    name: Run deploy
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out Git repository
+        uses: actions/checkout@v3
+
+
+      - id: 'auth'
+        name: 'Authenticate to Google Cloud'
+        uses: 'google-github-actions/auth@v0.4.0'
+        with:
+          token_format: 'access_token'
+          workload_identity_provider: ${{inputs.identity_pool}}
+          service_account: ${{inputs.identity_sa}}
+
+      # Setup gcloud CLI
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v0
+
+    # Build and push image to Google Container Registry
+      - name: Build
+        run: |-
+         # build / push image to artifact registry (using local Dockerfile)
+         gcloud builds submit --tag ${{inputs.image}}
+
+# deploy app to Cloud Run
+      - name: Build
+        run: |-
+         gcloud run deploy $SERVICE_NAME \
+         --platform managed \
+         --region $GCP_REGION \
+         --allow-unauthenticated \
+         --image ${{inputs.image}}
