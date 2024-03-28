@@ -20,9 +20,10 @@ on:
 
 jobs:
   run-deploy:
+    permissions:
+      id-token: write # This is required for requesting the JWT
     name: Run deploy
     runs-on: ubuntu-latest
-
     steps:
       - name: Check out Git repository
         uses: actions/checkout@v3
