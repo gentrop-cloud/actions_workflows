@@ -14,7 +14,13 @@ on:
       image:
         required: true
         type: string
-
+      name:
+        required: true
+        type: string
+      region:
+        required: true
+        type: string
+  
 
 # Down scope as necessary via https://docs.github.com/en/actions/security-guides/automatic-token-authentication#modifying-the-permissions-for-the-github_token
 
@@ -40,22 +46,18 @@ jobs:
       # Setup gcloud CLI
       - name: Set up Cloud SDK
         uses: google-github-actions/setup-gcloud@v2
-
-      - name: 'Use gcloud CLI'
-        run: gcloud auth login --brief --cred-file="${{ steps.auth.outputs.credentials_file_path }}"
-
-      - name: 'Use gcloud CLI'
-        run: gcloud auth list
-
+        with:
+          version: '>= 363.0.0'
+  
       # Build and push image to Google Container Registry
       - name: Build
         run: gcloud builds submit --tag ${{inputs.image}}
 
-# deploy app to Cloud Run
+      # deploy app to Cloud Run
       - name: Deploy
         run: |-
-         gcloud run deploy $SERVICE_NAME \
+         gcloud run deploy ${{inputs.name}} \
          --platform managed \
-         --region $GCP_REGION \
+         --region ${{inputs.region}} \
          --allow-unauthenticated \
          --image ${{inputs.image}}
