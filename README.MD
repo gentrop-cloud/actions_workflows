@@ -4,12 +4,7 @@
 This repository contains all our worflows, and allows them to be reused in projects
 
 ## Checkout our available Workflows:
-
-
-
-### Lint 
-This workflow help us to detect Linting issues with annotations in the PR, and it fixes other issues auto. \
-Docs [here](./docs/lint.md).
+- [Lint](./docs/lint.md): This workflow help us to detect Linting issues
 
 
 ### Test 
