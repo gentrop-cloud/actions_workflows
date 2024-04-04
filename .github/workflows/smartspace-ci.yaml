@@ -1,0 +1,81 @@
+name: CI
+
+on:
+  # Trigger the workflow on push or pull request,
+  # but only for the main branch
+  workflow_call:
+    inputs:
+      node_version:
+        required: true
+        type: string
+      project_id:
+        required: true
+        type: string
+      token_ci:
+        required: true
+        type: string
+      environment:
+        required: true
+        type: string
+
+
+# Down scope as necessary via https://docs.github.com/en/actions/security-guides/automatic-token-authentication#modifying-the-permissions-for-the-github_token
+
+jobs:
+  run-tests:
+    name: Run CI
+    runs-on: ubuntu-latest
+    environment: ${{inputs.environment}}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{inputs.node_version}}
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v2.1.0
+        with:
+          version: 7
+          run_install: false
+
+      - name: Get pnpm store directory
+        id: pnpm-cache
+        run: |
+          echo "::set-output name=pnpm_cache_dir::$(pnpm store path)"
+
+      - name: Setup pnpm cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ steps.pnpm-cache.outputs.pnpm_cache_dir }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Cache firebase emulators
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/firebase/emulators
+          key: ${{ runner.os }}-firebase-emulators-${{ hashFiles('~/.cache/firebase/emulators/**') }}
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Install Firebase Tools
+        run: pnpm i -g firebase-tools@10.9.2
+
+      - name: Start Meilisearch
+        uses: moy2010/meilisearch-github-action@0.1
+        with:
+          meilisearch-version: v0.25.2
+
+
+      - name: Run tests
+        run: firebase emulators:exec --only firestore --project ${{ inputs.project_id }} 'pnpm test:ci'
+        env:
+          FIREBASE_TOKEN: ${{ inputs.token_ci }}
+          FIRESTORE_EMULATOR_HOST: "127.0.0.1:8080"
+          MEILISEARCH_HOST: "http://127.0.0.1:7700"
