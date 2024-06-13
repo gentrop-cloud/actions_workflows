@@ -1,5 +1,5 @@
 ## Setup
-
+```
 export PROJECT_ID=<YOUR_PROJECT_ID>
 export PROJECT_NUMBER=<YOUR_PROJECT_NUMBER>
 export REPOSITORY_PATH=<YOUR_REPOSITORY_PATH>
@@ -7,6 +7,7 @@ export POOL_NAME=<POOL_NAME>
 export PROVIDER_NAME=<PROVIDER_NAME>
 export SA_NAME=<YOUR_SA_NAME>
 export SA_EMAIL=$SA_NAME@$PROJECT_ID.iam.gserviceaccount.com
+```
 
 gcloud iam workload-identity-pools create $POOL_NAME --location="global" --project $PROJECT_ID
 
