@@ -37,3 +37,6 @@ gcloud iam service-accounts add-iam-policy-binding "${SA_EMAIL}" \
 
 ## Criando via terraform
 https://github.com/mscribellito/terraform-google-workload-identity-federation
+
+## Referencia
+https://github.com/google-github-actions/auth
